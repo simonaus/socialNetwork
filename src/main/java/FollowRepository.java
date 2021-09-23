@@ -13,4 +13,8 @@ public class FollowRepository {
         }
         followDatabase.get(follower).add(followee);
     }
+
+    public Map<String, List<String>> getFollowDatabase() {
+        return followDatabase;
+    }
 }

@@ -135,6 +135,6 @@ class SocialNetworkShould {
         followDatabase.put("Alice", Arrays.asList("Bob"));
         FollowRepository followRepository = new FollowRepository();
         followRepository.saveFollow("Alice", "Bob");
-
+        assertEquals(followDatabase, followRepository.getFollowDatabase());
     }
 }
