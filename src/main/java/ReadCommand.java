@@ -2,10 +2,11 @@ import java.util.List;
 
 public class ReadCommand implements Command {
 
-    PostRepository postRepository = new PostRepository();
+    PostRepository postRepository;
     Printer printer = new Printer();
 
-    public ReadCommand() {
+    public ReadCommand(PostRepository postRepository) {
+        this.postRepository = postRepository;
     }
 
     public ReadCommand(PostRepository postRepository, Printer printer) {

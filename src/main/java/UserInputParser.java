@@ -1,9 +1,14 @@
 public class UserInputParser {
 
-    PostCommand postCommand = new PostCommand();
-    ReadCommand readCommand = new ReadCommand();
-    FollowCommand followCommand = new FollowCommand();
-    WallCommand wallCommand = new WallCommand();
+    PostRepository postRepository = new PostRepository();
+    FollowRepository followRepository = new FollowRepository();
+    PostCommand postCommand = new PostCommand(postRepository);
+    ReadCommand readCommand = new ReadCommand(postRepository);
+    FollowCommand followCommand = new FollowCommand(followRepository);
+    WallCommand wallCommand = new WallCommand(postRepository, followRepository);
+
+    public UserInputParser() {
+    }
 
     public UserInputParser(PostCommand postCommand) {
         this.postCommand = postCommand;
@@ -22,9 +27,14 @@ public class UserInputParser {
     }
 
     public void parse(String input) {
-        if (input.contains("->")) postCommand.execute(input);
-        if (input.contains("follows")) followCommand.execute(input);
-        if (input.contains("wall")) wallCommand.execute(input);
-        readCommand.execute(input);
+        if (input.contains("->")) {
+            postCommand.execute(input);
+        } else if (input.contains("follows")) {
+            followCommand.execute(input);
+        } else if (input.contains("wall")) {
+            wallCommand.execute(input);
+        } else {
+            readCommand.execute(input);
+        }
     }
 }

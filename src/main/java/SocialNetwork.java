@@ -1,15 +1,12 @@
 public class SocialNetwork {
 
-    Printer printer;
     UserInputParser userInputParser;
 
-    public SocialNetwork(Printer printer, UserInputParser userInputParser) {
-        this.printer = printer;
+    public SocialNetwork(UserInputParser userInputParser) {
         this.userInputParser = userInputParser;
     }
 
     public void userInput(String userInput) {
         userInputParser.parse(userInput);
-        printer.print(userInput);
     }
 }

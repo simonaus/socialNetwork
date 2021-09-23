@@ -17,4 +17,8 @@ public class FollowRepository {
     public Map<String, List<String>> getFollowDatabase() {
         return followDatabase;
     }
+
+    public List<String> getFollowersByUser(String user) {
+        return followDatabase.get(user);
+    }
 }

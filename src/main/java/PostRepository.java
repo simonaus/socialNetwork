@@ -9,6 +9,7 @@ public class PostRepository {
 
     public void savePost(String user, String content) {
         Post post = new Post(content);
+
         if (!postDatabase.containsKey(user)) {
             postDatabase.put(user, new ArrayList<>());
         }
@@ -21,6 +22,7 @@ public class PostRepository {
 
 
     public List<Post> getPostsByUser(String user) {
-        return postDatabase.get(user);
+        List<Post> postList = postDatabase.get(user);
+        return postList;
     }
 }

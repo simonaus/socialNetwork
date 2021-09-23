@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.Executor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,7 +13,7 @@ class SocialNetworkShould {
     @Test
     public void socialNetworkShouldProcessTheFourTypesOfUserInput() {
         Printer printer = new Printer();
-        SocialNetwork socialNetwork = new SocialNetwork(printer, new UserInputParser(new PostCommand()));
+        SocialNetwork socialNetwork = new SocialNetwork(new UserInputParser());
 
         socialNetwork.userInput("Alice -> I love the weather today");
         socialNetwork.userInput("Alice");
@@ -25,18 +27,9 @@ class SocialNetworkShould {
     }
 
     @Test
-    public void socialMediaShouldSendOutputToPrinter() {
-        Printer printer = mock(Printer.class);
-        UserInputParser userInputParser = mock(UserInputParser.class);
-        SocialNetwork socialNetwork = new SocialNetwork(printer, userInputParser);
-        socialNetwork.userInput("Alice");
-        verify(printer).print(any(String.class));
-    }
-
-    @Test
     void send_user_input_to_the_parser() {
         UserInputParser userInputParser = mock(UserInputParser.class);
-        SocialNetwork socialNetwork = new SocialNetwork(new Printer(), userInputParser);
+        SocialNetwork socialNetwork = new SocialNetwork(userInputParser);
         socialNetwork.userInput("Alice -> I love the weather today");
         verify(userInputParser).parse("Alice -> I love the weather today");
     }
@@ -136,5 +129,44 @@ class SocialNetworkShould {
         FollowRepository followRepository = new FollowRepository();
         followRepository.saveFollow("Alice", "Bob");
         assertEquals(followDatabase, followRepository.getFollowDatabase());
+    }
+
+    @Test
+    void wallCommandShouldRequestPostRepositoryAndFollowRepository() {
+        Printer printer = mock(Printer.class);
+        PostRepository postRepository = mock(PostRepository.class);
+        FollowRepository followRepository = mock(FollowRepository.class);
+
+        WallCommand wallCommand = new WallCommand(postRepository, followRepository, printer);
+
+        // it is saving, not retrieving
+        postRepository.savePost("Alice", "I love the weather today");
+        postRepository.savePost("Bob", "I hate the weather");
+
+        when(followRepository.getFollowersByUser("Alice")).thenReturn(Arrays.asList("Bob"));
+
+        wallCommand.execute("Alice");
+
+        verify(followRepository).getFollowersByUser("Alice");
+        verify(postRepository).getPostsByUser("Alice");
+        verify(postRepository).getPostsByUser("Bob");
+    }
+
+    @Test
+    void wallCommandShouldPrintThePostsRetrievedFromRepository() {
+        Printer printer = mock(Printer.class);
+        PostRepository postRepository = mock(PostRepository.class);
+        FollowRepository followRepository = mock(FollowRepository.class);
+
+        when(followRepository.getFollowersByUser("Alice")).thenReturn(Arrays.asList("Bob"));
+        when(postRepository.getPostsByUser("Alice")).thenReturn(Arrays.asList(new Post("I love the weather today")));
+        when(postRepository.getPostsByUser("Bob")).thenReturn(Arrays.asList(new Post("I hate the weather")));
+
+        WallCommand wallCommand = new WallCommand(postRepository, followRepository, printer);
+
+        wallCommand.execute("Alice");
+
+        verify(printer).print("I love the weather today");
+        verify(printer).print("I hate the weather");
     }
 }
