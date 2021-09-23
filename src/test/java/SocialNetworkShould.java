@@ -4,8 +4,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class SocialNetworkShould {
 
@@ -96,7 +95,7 @@ class SocialNetworkShould {
     @Test
     void readCommandShouldRequestPostsToPrintFromRepository() {
         PostRepository postRepository = mock(PostRepository.class);
-        ReadCommand readCommand = new ReadCommand(postRepository);
+        ReadCommand readCommand = new ReadCommand(postRepository, new Printer());
         readCommand.execute("Alice");
         verify(postRepository).getPostsByUser("Alice");
     }
@@ -110,5 +109,32 @@ class SocialNetworkShould {
         postRepository.savePost("Alice", "I love the weather today");
 
         assertEquals(postsByUser, postRepository.getPostsByUser("Alice"));
+    }
+
+    @Test
+    void readCommandShouldPrintThePostsRetrievedFromRepository() {
+        PostRepository postRepository = mock(PostRepository.class);
+        Printer printer = mock(Printer.class);
+        when(postRepository.getPostsByUser("Alice")).thenReturn(Arrays.asList(new Post("I love the weather today")));
+        ReadCommand readCommand = new ReadCommand(postRepository, printer);
+        readCommand.execute("Alice");
+        verify(printer).print("I love the weather today");
+    }
+
+    @Test
+    void followCommandShouldRequestFollowRepository() {
+        FollowRepository followRepository = mock(FollowRepository.class);
+        FollowCommand followCommand = new FollowCommand(followRepository);
+        followCommand.execute("Alice follows Bob");
+        verify(followRepository).saveFollow("Alice", "Bob");
+    }
+
+    @Test
+    void followRepositoryShouldSaveFollowsToFollowDatabase() {
+        Map<String, List<String>> followDatabase = new HashMap<>();
+        followDatabase.put("Alice", Arrays.asList("Bob"));
+        FollowRepository followRepository = new FollowRepository();
+        followRepository.saveFollow("Alice", "Bob");
+
     }
 }

@@ -14,4 +14,8 @@ public class Post {
         Post post = (Post) o;
         return Objects.equals(content, post.content);
     }
+
+    public String getContent() {
+        return content;
+    }
 }
