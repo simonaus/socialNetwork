@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SocialNetworkShould" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-09-23T08:56:18" hostname="DESKTOP-L3DS2QF" time="0.577">
+  <properties/>
+  <testcase name="socialMediaShouldSendOutputToPrinter()" classname="SocialNetworkShould" time="0.577"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
